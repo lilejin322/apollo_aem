@@ -69,8 +69,25 @@ start_stopped_container() {
     fi
 }
 
+check_container_exists() {
+  if docker_container_exists "${DEV_CONTAINER}"; then
+    return 0
+  fi
+  error "container ${DEV_CONTAINER} not exists. \n \
+         1.Please confirm that the container has started first? If not, please execute aem start first. \n \
+         2.If you specified the container name through the -n parameter, please confirm if the parameter is correct. \n \
+         3.If you did not specify the container name through the -n parameter, please enter the project directory and execute aem enter again"
+  return 1
+}
+
 main() {
     parse_arguments "$@"
+
+    check_container_exists
+    if [ ! $? -eq 0 ]
+    then
+        exit 1
+    fi
 
     start_stopped_container
 

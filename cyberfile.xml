@@ -1,6 +1,6 @@
 <package format="2">
   <name>env-manager-dev</name>
-  <version>9.0.0-alpha2-r2</version>
+  <version>9.0.0-beta-r0</version>
   <description>
     Apollo env manager.
   </description>

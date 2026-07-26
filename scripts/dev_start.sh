@@ -73,7 +73,8 @@ OPTIONS:
     -c, --cross-platform <arch>   Run a cross-platform image
     -y                            Agree to Apollo License Agreement non-interactively.
     --shm-size <bytes>            Size of /dev/shm . Passed directly to "docker run"
-    --gpu                         Use gpu image instead of cpu image.
+    --gpu                         Use gpu mode to start container.
+    --gpu                         Use cpu mode to start container.
     stop                          Stop all running Apollo containers.
 EOF
 }
@@ -169,6 +170,10 @@ parse_arguments() {
 
             --gpu)
                 USE_GPU_HOST=1
+                ;;
+
+            --cpu)
+                USE_GPU_HOST=0
                 ;;
 
             -n | --name)
@@ -271,6 +276,10 @@ setup_extra_volumes() {
     if [[ "${flag_custom_map}" == "0" ]]; then
         bash -c "mkdir -p $ws_in_host/data/map_data"
         volumes="${volumes} -v $ws_in_host/data/map_data:/apollo/modules/map/data"
+    fi
+    tegrastats="/usr/bin/tegrastats"
+    if [[ -x ${tegrastats} ]]; then
+        volumes="${volumes} -v ${tegrastats}:${tegrastats}"
     fi
 
     volumes="${volumes} -v ${APOLLO_ROOT_DIR}:${DEV_CONTAINER_MOUNT_DIR}"

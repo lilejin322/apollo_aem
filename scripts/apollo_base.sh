@@ -221,7 +221,7 @@ docker_volume_exists() {
 
 docker_container_exists() {
     local container="${1}"
-    local query="$(docker ps -a --format={{.Names}} -f name=${container} | grep "^${container}$"}})"
+    local query="$(docker ps -a --format={{.Names}} -f name=${container} | grep "^${container}$")"
     if [[ "${query}" == "${container}" ]]; then
         return 0
     else
