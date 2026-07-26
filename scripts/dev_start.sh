@@ -281,7 +281,10 @@ setup_extra_volumes() {
     if [[ -x ${tegrastats} ]]; then
         volumes="${volumes} -v ${tegrastats}:${tegrastats}"
     fi
-
+    auca_sdk_so="/usr/lib/libapollo-auca-sdk.so.1"
+    if [[ -x ${auca_sdk_so} ]]; then
+        volumes="${volumes} -v ${auca_sdk_so}:${auca_sdk_so}"
+    fi
     volumes="${volumes} -v ${APOLLO_ROOT_DIR}:${DEV_CONTAINER_MOUNT_DIR}"
     echo "${volumes}"
 }

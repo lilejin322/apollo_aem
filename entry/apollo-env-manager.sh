@@ -122,9 +122,9 @@ function main() {
 
 main $@
 
-echo -e ""
-info "Update the apt repositories..."
-sudo apt-get update >/dev/null 2>&1
+#echo -e ""
+#info "Update the apt repositories..."
+#sudo apt-get update >/dev/null 2>&1
 info "Query new version of aem..."
 query_res=$(apt list apollo-neo-env-manager-dev 2>/dev/null)
 
