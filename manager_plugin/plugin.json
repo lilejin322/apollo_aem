@@ -1,0 +1,27 @@
+{
+    "linux_distribution": "Ubuntu 18.04.5 LTS",
+    "kernal": "Linux 5.4.0-42-generic",
+    "arch": "x86_64",
+    "image": "registry.baidubce.com/apollo/apollo-env-gpu:0.0.2-beta",
+    "apollo_distribution": "neo",
+    "package_info": {
+        "type": "local",
+        "source": "/apollo_workspace/manager_plugin",
+        "build_ops": []
+    },
+    "release_detail": {
+        "name": "manager-plugin",
+        "ver": "1.0.0.2",
+        "arch": "amd64",
+        "description": "Apollo environment manager.",
+        "deps": [],
+        "preinst_extend_ops": [],
+        "postinst_extend_ops": [],
+        "data": [
+            {
+                "src": "/apollo_workspace/manager_plugin/*",
+                "des": "/opt/apollo/neo/etc/env_manager_plugin"
+            }
+        ]
+    }
+}

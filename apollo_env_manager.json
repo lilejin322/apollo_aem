@@ -1,0 +1,36 @@
+{
+    "linux_distribution": "Ubuntu 18.04.5 LTS",
+    "kernal": "Linux 5.4.0-42-generic",
+    "arch": "x86_64",
+    "image": "registry.baidubce.com/apollo/apollo-env-gpu:0.0.2-beta",
+    "apollo_distribution": "neo",
+    "package_info": {
+        "type": "local",
+        "source": "/apollo_workspace/aem",
+        "build_ops": []
+    },
+    "release_detail": {
+        "name": "env-manager",
+        "ver": "9.0.0-alpha1-r1",
+        "arch": "amd64",
+        "description": "Apollo environment manager.",
+        "deps": [],
+        "preinst_extend_ops": [
+            "mkdir -p /opt/apollo/neo/packages/env-manager-dev/9.0.0-alpha1-r1",
+            "mkdir -p /opt/apollo/neo/etc",
+            "chmod 777 -R /opt/apollo/neo/etc"
+        ],
+        "postinst_extend_ops": [
+            "ln -snf /opt/apollo/neo/packages/env-manager-dev/latest/entry/apollo-env-manager.sh /usr/local/bin/aem",
+            "bash -c \"source /opt/apollo/neo/packages/env-manager-dev/latest/scripts/auto_complete.bash\"",
+            "for i in $(ls /home); do if [ -d \"/home/$i\" ]; then bash -c \"echo 'if [ -e /opt/apollo/neo/packages/env-manager-dev/latest/scripts/auto_complete.bash ]; then . /opt/apollo/neo/packages/env-manager-dev/latest/scripts/auto_complete.bash; fi' >> /home/$i/.bashrc\"; fi; done;",
+            "bash -c \"echo 'if [ -e /opt/apollo/neo/packages/env-manager-dev/latest/scripts/auto_complete.bash ]; then . /opt/apollo/neo/packages/env-manager-dev/latest/scripts/auto_complete.bash; fi' >> /root/.bashrc\""
+        ],
+        "data": [
+            {
+                "src": "/apollo_workspace/aem/",
+                "des": "-"
+            }
+        ]
+    }
+}

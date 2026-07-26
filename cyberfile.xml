@@ -1,0 +1,17 @@
+<package format="2">
+  <name>env-manager-dev</name>
+  <version>9.0.0-alpha1-r1</version>
+  <description>
+    Apollo env manager.
+  </description>
+
+  <maintainer email="apollo-maintaner@baidu.com">Apollo</maintainer>
+  <license>Apache License 2.0</license>
+  <url type="website">https://www.apollo.auto/</url>
+  <url type="repository">https://github.com/ApolloAuto/apollo</url>
+  <url type="bugtracker">https://github.com/ApolloAuto/apollo/issues</url>
+  
+  <src_path>//None</src_path>
+  <type>pure-binary</type>
+
+</package>
