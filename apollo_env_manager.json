@@ -11,7 +11,7 @@
     },
     "release_detail": {
         "name": "env-manager",
-        "ver": "9.0.0-alpha2-r1",
+        "ver": "9.0.0-alpha2-r2",
         "arch": "amd64",
         "description": "Apollo environment manager.",
         "deps": [],
