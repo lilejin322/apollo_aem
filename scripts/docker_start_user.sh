@@ -32,7 +32,7 @@ function _create_user_account() {
   usermod -aG sudo "${user_name}"
   usermod -aG video "${user_name}"
 
-  chown -R "${user_name}:${group_name}"  "/home/${user_name}"
+  chown "${user_name}:${group_name}"  "/home/${user_name}"
 }
 
 function setup_user_bashrc() {
@@ -52,7 +52,7 @@ function setup_user_bashrc() {
   fi
   # Set user files ownership to current user, such as .bashrc, .profile, etc.
   # chown -R "${uid}:${gid}" "${user_home}"
-  chown -R "${uid}:${gid}" ${user_home}/.*
+  chown "${uid}:${gid}" ${user_home}/.*
 }
 
 function setup_user_account_if_not_exist() {
