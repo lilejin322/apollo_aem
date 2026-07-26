@@ -552,6 +552,8 @@ apollo_create_container_volume_options() {
   volume_opts+=('-v' '/tmp/.X11-unix:/tmp/.X11-unix:rw')
   # kernel modules
   volume_opts+=('-v' '/lib/modules:/lib/modules')
+  # localtime
+  volume_opts+=('-v' '/etc/localtime:/etc/localtime:ro')
 
   # auca
   auca_sdk_so="/usr/lib/libapollo-auca-sdk.so.1"
