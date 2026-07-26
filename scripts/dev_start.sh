@@ -52,6 +52,8 @@ SHM_SIZE="2G"
 CROSS_PLATFORM_FLAG=0
 CUSTOM_MOUNT_PATH=()
 
+AIPE_ENV_VAR_SET=
+
 # override environment variables
 [[ -e "$PWD/.env" ]] && set -a && source "$PWD/.env" && set +a
 
@@ -74,7 +76,7 @@ OPTIONS:
     -y                            Agree to Apollo License Agreement non-interactively.
     --shm-size <bytes>            Size of /dev/shm . Passed directly to "docker run"
     --gpu                         Use gpu mode to start container.
-    --gpu                         Use cpu mode to start container.
+    --cpu                         Use cpu mode to start container.
     stop                          Stop all running Apollo containers.
 EOF
 }
@@ -285,6 +287,7 @@ setup_extra_volumes() {
     if [[ -x ${auca_sdk_so} ]]; then
         volumes="${volumes} -v ${auca_sdk_so}:${auca_sdk_so}"
     fi
+
     volumes="${volumes} -v ${APOLLO_ROOT_DIR}:${DEV_CONTAINER_MOUNT_DIR}"
     echo "${volumes}"
 }
@@ -300,11 +303,9 @@ postrun_link_aem_and_install_core_pkgs() {
 
     local init_packages=(
         'apollo-neo-buildtool'
-        'apollo-neo-cyber'
-        'apollo-neo-common'
-        'apollo-neo-common-msgs'
     )
     run_in_container_as_root "apt update && apt install --only-upgrade -y ${init_packages[@]}"
+    run_in_container_as_root "[[ -e /sys/kernel/debug ]] && chmod +rx /sys/kernel/debug"
 }
 
 determine_dev_image() {
@@ -469,6 +470,8 @@ setup_devices_and_mount_local_volumes() {
                         -v /etc/localtime:/etc/localtime:ro \
                         -v /usr/src:/usr/src \
                         -v /lib/modules:/lib/modules"
+    [[ `uname -m` == aarch64 ]] && [[ -e "/sys/kernel/debug" ]] && \
+    volumes="${volumes} -v /sys/kernel/debug:/sys/kernel/debug"
     volumes="$(tr -s " " <<<"${volumes}")"
     eval "${__retval}='${volumes}'"
 }
@@ -596,6 +599,11 @@ check_can_restart() {
     fi
 }
 
+check_aipe_env_variable() {
+    cat /etc/bash.bashrc | grep AIPE_WITH_UNIX_DOMAIN_SOCKET
+    [[ $? == 0 ]] && AIPE_ENV_VAR_SET='-e AIPE_WITH_UNIX_DOMAIN_SOCKET=ON'
+}
+
 run_container() {
     local local_volumes=
     setup_devices_and_mount_local_volumes local_volumes
@@ -619,6 +627,8 @@ run_container() {
         envs[${#envs[@]}]="-e ${x}=${!x}"
     done
 
+    check_aipe_env_variable
+
     set -x
 
     ${DOCKER_RUN_CMD} -itd \
@@ -637,6 +647,7 @@ run_container() {
         -e USE_GPU_HOST="${USE_GPU_HOST}" \
         -e NVIDIA_VISIBLE_DEVICES=all \
         -e NVIDIA_DRIVER_CAPABILITIES=compute,video,graphics,utility \
+        ${AIPE_ENV_VAR_SET} \
         ${envs[@]} \
         ${local_volumes} \
         ${env_volumes} \
@@ -762,3 +773,4 @@ if [[ "${BASH_SOURCE[0]}" != "${0}" ]]; then
 else
     main "$@"
 fi
+
