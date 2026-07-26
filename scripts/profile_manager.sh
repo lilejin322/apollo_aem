@@ -60,7 +60,7 @@ use() {
     fi
     sudo python3 ${conf_manager_script} recover -t ${conf_dir}  -r ${APOLLO_DISTRIBUTION_HOME}/share
     if [ $? -ne 0 ]; then
-        error "recover invalid conf failed."
+        warning "recover invalid conf failed."
         exit -1
     fi
     ok "use profile ${1} successfully."

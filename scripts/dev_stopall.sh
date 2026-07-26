@@ -16,4 +16,35 @@
 TOP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
 source "${TOP_DIR}/scripts/apollo_base.sh"
 
-stop_all_apollo_containers $@
+show_usage() {
+    cat <<EOF
+Usage: aem [options] ...
+OPTIONS:
+    -h, --help                    Display this help and exit.
+    -f, --force                   This parameter is obsolete, delete containers.
+    stopall                       Stop all containers.
+EOF
+}
+
+parse_arguments() {
+    local container_name=''
+
+    while [ $# -gt 0 ]; do
+        local opt="$1"
+        shift
+        case "${opt}" in
+            -h | --help)
+                show_usage
+                exit 1
+                ;;
+        esac
+    done
+}
+
+function main() {
+    parse_arguments "$@"
+    stop_all_apollo_containers $@
+}
+
+main $@
+

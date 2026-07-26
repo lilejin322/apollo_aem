@@ -27,8 +27,16 @@ start() {
         ${BUILD_TOOL} bootstrap start dreamview-dev
         ${BUILD_TOOL} bootstrap start monitor-dev
     else
-        ${BUILD_TOOL} bootstrap start dreamview
-        ${BUILD_TOOL} bootstrap start monitor
+        case $1 in
+            --plus)
+                ${BUILD_TOOL} bootstrap start dreamview_plus
+                ${BUILD_TOOL} bootstrap start monitor
+                ;;
+            *)
+                ${BUILD_TOOL} bootstrap start dreamview
+                ${BUILD_TOOL} bootstrap start monitor
+                ;;
+        esac
     fi
     sleep 5 # wait for some time before starting to check
     http_status="$(curl -o /dev/null -x '' -I -L -s -w '%{http_code}' ${DREAMVIEW_URL})"
@@ -40,31 +48,46 @@ start() {
 }
 
 stop() {
-    ${BUILD_TOOL} bootstrap stop dreamview
-    ${BUILD_TOOL} bootstrap stop monitor
+    if [[ -z "${APOLLO_DISTRIBUTION_VERSION}" ]]; then
+        ${BUILD_TOOL} bootstrap stop dreamview-dev >/dev/null 2>&1
+        ${BUILD_TOOL} bootstrap stop monitor-dev >/dev/null 2>&1
+    else
+        ${BUILD_TOOL} bootstrap stop dreamview >/dev/null 2>&1
+        ${BUILD_TOOL} bootstrap stop dreamview_plus >/dev/null 2>&1
+        ${BUILD_TOOL} bootstrap stop monitor >/dev/null 2>&1
+    fi
+    info "complete."
 }
 
 help() {
-    ${BUILD_TOOL} bootstrap -h
+    cat <<EOF
+Usage: aem bootstrap [options] [argument] ...
+OPTIONS:
+    start --plus                    Start dreamview 2.0.
+    start                           Start dreamview.
+    stop                            Stop dreamview or dreamview 2.0.
+EOF
 }
 
 parse_arguments() {
     case $1 in
         start)
-            start
+            shift
+            start $@
             ;;
         stop)
             stop
             ;;
         restart)
             stop
-            start
+            shift
+            start $@
             ;;
         --help | -h)
             help
             ;;
         *)
-            start
+            help
             ;;
     esac
 }

@@ -27,6 +27,16 @@ APOLLO_ENV_WORKROOT=${APOLLO_ENV_WORKROOT:='/apollo_workspace'}
 # derived variables
 DEV_CONTAINER="${APOLLO_ENV_CONTAINER_PREFIX}${APOLLO_ENV_NAME}"
 
+show_usage() {
+    cat <<EOF
+Usage: aem [options] ...
+OPTIONS:
+    -h, --help                    Display this help and exit.
+    --user                        Filter containers by user.
+    list                          Show Apollo containers.
+EOF
+}
+
 parse_arguments() {
     local container_name=''
 
@@ -34,6 +44,11 @@ parse_arguments() {
         local opt="$1"
         shift
         case "${opt}" in
+            -h | --help)
+                show_usage
+                exit 1
+                ;;
+
             --user)
                 # TODO: filter containers by user
                 export CUSTOM_USER="$1"

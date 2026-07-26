@@ -19,7 +19,32 @@
 TOP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
 source "${TOP_DIR}/scripts/apollo_base.sh"
 
+show_usage() {
+    cat <<EOF
+Usage: aem [options] ...
+OPTIONS:
+    -h, --help                    Display this help and exit.
+    update                        Update aem.
+EOF
+}
+
+parse_arguments() {
+    local container_name=''
+
+    while [ $# -gt 0 ]; do
+        local opt="$1"
+        shift
+        case "${opt}" in
+            -h | --help)
+                show_usage
+                exit 1
+                ;;
+        esac
+    done
+}
+
 function main() {
+    parse_arguments "$@"
     check_in_dev_docker
     if [ ! $? -eq 0 ]; then exit -1; fi
     if [ -f /.installed ]

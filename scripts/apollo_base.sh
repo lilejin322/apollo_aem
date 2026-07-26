@@ -324,6 +324,9 @@ download_tegra_lib() {
 stop_all_apollo_containers() {
     local force="$1"
     local running_containers
+    if [[ "${force}" == "-f" || "${force}" == "--force" ]]; then
+        warning "Parameter - f/-- force deleted"
+    fi
     running_containers="$(docker ps -a --format '{{.Names}}')"
     for container in ${running_containers[*]}; do
         if [[ "${container}" =~ apollo_neo_.*_${USER} ]]; then
@@ -332,9 +335,6 @@ stop_all_apollo_containers() {
             #printf "\033[31m[FAILED]\033[0m\n"
             info "Now stop container ${container} ..."
             if docker stop "${container}" >/dev/null; then
-                if [[ "${force}" == "-f" || "${force}" == "--force" ]]; then
-                    docker rm -f "${container}" 2>/dev/null
-                fi
                 info "Done."
             else
                 warning "Failed."

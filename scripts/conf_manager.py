@@ -88,13 +88,14 @@ def recover(target_dir, recovered_dir):
             filename = os.path.join(root, name)
             if not os.path.islink(filename):
                 continue
-            if os.path.exists(os.readlink(filename)):
+            if os.path.exists(filename):
                 continue
             recovered_filename = os.path.join(recovered_dir, filename[len(target_dir):].lstrip('/'))
             logger.info("begin recover file: %s", filename)
             if not os.path.isfile(recovered_filename):
-                logger.error("recover %s error, recovered file not exists.", filename)
+                logger.warn("recover %s error, recovered file not exists.", filename)
                 succ = False
+                continue
             os.remove(filename)
             os.symlink(recovered_filename, filename)
     return succ

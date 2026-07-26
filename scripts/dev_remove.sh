@@ -28,6 +28,18 @@ APOLLO_ENV_WORKLOCAL=0
 # derived variables
 DEV_CONTAINER="${APOLLO_ENV_CONTAINER_PREFIX}${APOLLO_ENV_NAME}"
 
+show_usage() {
+    cat <<EOF
+Usage: aem [options] ...
+OPTIONS:
+    -h, --help                    Display this help and exit.
+    -n, --name                    specify container name to remove.
+    -w, --workspace               specify container workspace.
+    --worklocal                   specify remove local env.
+    remove                        Remove Apollo containers.
+EOF
+}
+
 parse_arguments() {
     local container_name=''
 
@@ -35,6 +47,11 @@ parse_arguments() {
         local opt="$1"
         shift
         case "${opt}" in
+             -h | --help)
+                show_usage
+                exit 1
+                ;;
+
             -n | --name)
                 container_name="$1"
                 DEV_CONTAINER="${APOLLO_ENV_CONTAINER_PREFIX}${container_name}"

@@ -18,24 +18,54 @@
 APOLLO_ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
 source "${APOLLO_ROOT_DIR}/scripts/apollo_base.sh"
 
-# Setup core dump format.
-if [ -e /proc/sys/kernel ]; then
-  echo "${APOLLO_TOP_DIR}/data/core/core_%e.%p" | \
-      sudo tee /proc/sys/kernel/core_pattern
-fi
+show_usage() {
+    cat <<EOF
+Usage: aem [options] ...
+OPTIONS:
+    -h, --help                    Display this help and exit.
+    setup_host                    Setup host.
+EOF
+}
 
-# Setup ntpdate to run once per minute. Log at /var/log/syslog.
-grep -q ntpdate /etc/crontab
-if [ $? -ne 0 ]; then
-  echo "*/1 * * * * root ntpdate -v -u us.pool.ntp.org" | \
-      sudo tee -a /etc/crontab
-fi
+parse_arguments() {
+    local container_name=''
 
-# Add udev rules.
-sudo cp -r ${APOLLO_ROOT_DIR}/setup_host_etc_files/* /etc/
+    while [ $# -gt 0 ]; do
+        local opt="$1"
+        shift
+        case "${opt}" in
+            -h | --help)
+                show_usage
+                exit 1
+                ;;
+        esac
+    done
+}
+function main() {
+    parse_arguments "$@"
+    # Setup core dump format.
+    if [ -e /proc/sys/kernel ]; then
+      echo "${APOLLO_TOP_DIR}/data/core/core_%e.%p" | \
+          sudo tee /proc/sys/kernel/core_pattern
+    fi
 
-# Add uvcvideo clock config.
-grep -q uvcvideo /etc/modules
-if [ $? -ne 0 ]; then
-  echo "uvcvideo clock=realtime" | sudo tee -a /etc/modules
-fi
+    # Setup ntpdate to run once per minute. Log at /var/log/syslog.
+    grep -q ntpdate /etc/crontab
+    if [ $? -ne 0 ]; then
+      echo "*/1 * * * * root ntpdate -v -u us.pool.ntp.org" | \
+          sudo tee -a /etc/crontab
+    fi
+
+    # Add udev rules.
+    sudo cp -r ${APOLLO_ROOT_DIR}/setup_host_etc_files/* /etc/
+
+    # Add uvcvideo clock config.
+    grep -q uvcvideo /etc/modules
+    if [ $? -ne 0 ]; then
+      echo "uvcvideo clock=realtime" | sudo tee -a /etc/modules
+    fi
+    
+}
+
+main "$@"
+
