@@ -19,9 +19,12 @@ TOP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
 source "${TOP_DIR}/scripts/apollo_base.sh"
 source ~/.bashrc
 
-DREAMVIEW_URL="http://localhost:8888"
+DREAMVIEW_URL="http://localhost"
+DV_PLUS_PORT=8888
+DV_PORT=8899
 
 start() {
+    DV_ORIGIN=0
     if [[ -z "${APOLLO_DISTRIBUTION_VERSION}" ]]; then
         warning "APOLLO_DISTRIBUTION_VERSION is not set. fallback to 8.0"
         ${BUILD_TOOL} bootstrap start dreamview-dev
@@ -33,15 +36,21 @@ start() {
                 ${BUILD_TOOL} bootstrap start monitor
                 ;;
             *)
+                DV_ORIGIN=1
                 ${BUILD_TOOL} bootstrap start dreamview
                 ${BUILD_TOOL} bootstrap start monitor
                 ;;
         esac
     fi
     sleep 5 # wait for some time before starting to check
-    http_status="$(curl -o /dev/null -x '' -I -L -s -w '%{http_code}' ${DREAMVIEW_URL})"
+    if [ $DV_ORIGIN -eq 1 ]; then
+        DREAMVIEW_URL_WITH_PORT="${DREAMVIEW_URL}:${DV_PORT}"
+    else
+        DREAMVIEW_URL_WITH_PORT="${DREAMVIEW_URL}:${DV_PLUS_PORT}" 
+    fi
+    http_status="$(curl -o /dev/null -x '' -I -L -s -w '%{http_code}' ${DREAMVIEW_URL_WITH_PORT})"
     if [ $http_status -eq 200 ]; then
-        info "Dreamview is running at" $DREAMVIEW_URL
+        info "Dreamview is running at" $DREAMVIEW_URL_WITH_PORT
     else
         error "Failed to start Dreamview. Please check /opt/apollo/neo/data/log/dreamview.log or /opt/apollo/neo/data/log/monitor.log for more information"
     fi

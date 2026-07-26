@@ -31,7 +31,7 @@ declare -A COMMAND_DESC_MAP=(
     ["build"]="build package in workspace."
     ["install"]="install source code of specified package to workspace."
     ["init"]="init single workspace."
-    ["update"]="update core modules of apollo."
+    ["upgrade"]="upgrade apollo env manager."
     ["stopall"]="stop all apollo development container."
     ["setup_host"]="setup host"
     ["profile"]="profiles management"
@@ -50,7 +50,7 @@ declare -A COMMAND_SCRIPT_MAP=(
     ["build"]="${TOP_DIR}/scripts/apollo_build.sh"
     ["install"]="${TOP_DIR}/scripts/apollo_install.sh" 
     ["init"]="${TOP_DIR}/scripts/apollo_init.sh"
-    ["update"]="${TOP_DIR}/scripts/update.sh"
+    ["upgrade"]="${TOP_DIR}/scripts/update.sh"
     ["setup_host"]="${TOP_DIR}/scripts/setup_host.sh"
     ["profile"]="${TOP_DIR}/scripts/profile_manager.sh"
 )
@@ -121,3 +121,14 @@ function main() {
 }
 
 main $@
+
+#echo -e ""
+#info "Update the apt repositories..."
+#sudo apt-get update >/dev/null 2>&1
+info "Query new version of aem..."
+query_res=$(apt list apollo-neo-env-manager-dev 2>/dev/null)
+
+if [[ $query_res =~ "upgradable" ]]; then
+    info "New version of aem is available!"
+    info "You should consider upgrading via the 'aem upgrade'"
+fi

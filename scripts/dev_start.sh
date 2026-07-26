@@ -20,7 +20,7 @@ source "${APOLLO_ROOT_DIR}/scripts/apollo_base.sh"
 
 # Global variables
 APOLLO_ENV_CONTAINER_PREFIX="apollo_neo_dev_"
-APOLLO_ENV_NAME="${APOLLO_ENV_NAME:=${USER}}"
+APOLLO_ENV_NAME="${APOLLO_ENV_NAME:=${CUR_USER}}"
 APOLLO_ENV_WORKSPACE="${PWD}"
 APOLLO_ENV_WORKROOT=${APOLLO_ENV_WORKROOT:='/apollo_workspace'}
 APOLLO_ENV_WORKLOCAL=0
@@ -194,7 +194,7 @@ parse_arguments() {
                 ;;
 
             stop)
-                info "Now, stop all Apollo containers created by ${USER} ..."
+                info "Now, stop all Apollo containers created by ${CUR_USER} ..."
                 stop_all_apollo_containers "-f"
                 exit 0
                 ;;
@@ -422,7 +422,7 @@ setup_env_volumes() {
 
 setup_devices_and_mount_local_volumes() {
     local __retval="$1"
-    local user=${USER}
+    local user="${CUSTOM_USER:-${SUDO_USER-$USER}}"
     local home_path
     local src_path
 
@@ -605,10 +605,10 @@ run_container() {
 
     local local_host="$(hostname)"
     local display="${DISPLAY:-:0}"
-    local user="${CUSTOM_USER-$USER}"
-    local uid="${CUSTOM_UID-$(id -u)}"
-    local group="${CUSTOM_GROUP-$(id -g -n)}"
-    local gid="${CUSTOM_GID-$(id -g)}"
+    local user="${CUSTOM_USER:-${SUDO_USER-$USER}}"
+    local uid="${CUSTOM_UID:-${SUDO_UID-$(id -u)}}"
+    local group="${CUSTOM_GROUP-$(id -g -n $user)}"
+    local gid="${CUSTOM_GID:-${SUDO_GID-$(id -g)}}"
 
     # passthrough all APOLLO_ENV_* variables
     local envs=()
@@ -736,11 +736,12 @@ start() {
     postrun_link_aem_and_install_core_pkgs
     postrun_start_user "${DEV_CONTAINER}"
     postrun_cross_platfrom_download "${DEV_CONTAINER}" "${CROSS_PLATFORM_FLAG}"
+    postrun_echo_hello_info "${DEV_CONTAINER}"
 
-    ok "Congratulations! You have successfully finished setting up Apollo Dev Environment."
-    ok "To login into the newly created ${DEV_CONTAINER} container, please run the following command:"
-    ok "  aem enter"
-    ok "Enjoy!"
+    # ok "Congratulations! You have successfully finished setting up Apollo Dev Environment."
+    # ok "To login into the newly created ${DEV_CONTAINER} container, please run the following command:"
+    # ok "  aem enter"
+    # ok "Enjoy!"
 }
 
 main() {

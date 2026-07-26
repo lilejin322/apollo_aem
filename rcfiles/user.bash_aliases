@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 
-export PS1="\[\e[31m\][\[\e[m\]\[\e[32m\]\u\[\e[m\]\[\e[33m\]@\[\e[m\]\[\e[35m\]\h\[\e[m\]:\[\e[36m\]\w\[\e[m\]\[\e[31m\]]\[\e[m\]\[\e[1;32m\]\\$\[\e[m\] "
+apollo_version_PS1=""
+if [ -n "$APOLLO_DISTRIBUTION_VERSION" ]; then 
+    apollo_version_PS1="\[\e[33m\](apollo-$APOLLO_DISTRIBUTION_VERSION)"
+fi
+export PS1="${apollo_version_PS1}\[\e[31m\][\[\e[m\]\[\e[32m\]\u\[\e[m\]\[\e[33m\]@\[\e[m\]\[\e[35m\]\h\[\e[m\]:\[\e[36m\]\w\[\e[m\]\[\e[31m\]]\[\e[m\]\[\e[1;32m\]\\$\[\e[m\] "
 
 # export PATH="$PATH:/apollo/scripts"
 

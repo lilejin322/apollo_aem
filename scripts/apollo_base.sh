@@ -20,6 +20,7 @@ TOP_DIR="$(cd "$(dirname "${SH_SOURCE}")/.." && pwd)"
 APOLLO_TOP_DIR="$(cd "$(dirname "${SH_SOURCE}")/../../../.." && pwd -P)"
 ETC_DIR="${APOLLO_TOP_DIR}/etc"
 PLUGIN_DIR="${ETC_DIR}/env_manager_plugin"
+CUR_USER="${SUDO_USER-$USER}"
 export APOLLO_ENVS_ROOT="${APOLLO_ENVS_ROOT:=$HOME/.aem/envs}"
 
 buildtool="apollo-neo-buildtool-dev"
@@ -259,6 +260,13 @@ check_in_dev_docker() {
     return 0
 }
 
+check_out_dev_docker() {
+    if [ ! -f /.dockerenv ]; then
+        return 0
+    fi
+    return 1
+}
+
 check_core_installed() {
     if [ ! -f /.installed ]; then
         error "Core module of apollo is not installed!"
@@ -299,10 +307,25 @@ add_repo() {
 
 postrun_start_user() {
     local container="$1"
-    if [ "${USER}" != "root" ]; then
+    # aem start --user test
+    local user="${CUSTOM_USER-$CUR_USER}"
+    if [ "${user}" != "root" ]; then
         docker exec -u root "${container}" \
             bash -c "${TOP_DIR}/scripts/docker_start_user.sh"
     fi
+}
+
+postrun_echo_hello_info() {
+    local container="$1"
+    docker exec -u root -e container="${container}" "${container}" bash -c \
+    'source /opt/apollo/neo/setup.sh; \
+     echo -e "\033[35m**************************************************************"; \
+     echo -e "\033[32m  Congratulations! 🎉 Apollo Dev Environment is set up.\033[0m"; \
+     echo -e "\033[32m To login into the newly created \033[0;31m${container} \033[0m\033[32mcontainer.\033[0m"; \
+     echo -e "\033[32m   Please run the following command: \033[0;31m🌟 aem enter 🌟 \033[0m "; \
+     echo -e "\033[32m          Enjoy your coding journey! ✨\033[0m"; \
+     echo -e "\033[33m$(figlet -f big "      apollo ${APOLLO_DISTRIBUTION_VERSION}")\033[0m "; \
+     echo -e "\033[35m**************************************************************\033[0m"'
 }
 
 postrun_cross_platfrom_download() {
@@ -329,7 +352,7 @@ stop_all_apollo_containers() {
     fi
     running_containers="$(docker ps -a --format '{{.Names}}')"
     for container in ${running_containers[*]}; do
-        if [[ "${container}" =~ apollo_neo_.*_${USER} ]]; then
+        if [[ "${container}" =~ apollo_neo_.*_${CUR_USER} ]]; then
             #printf %-*s 70 "Now stop container: ${container} ..."
             #printf "\033[32m[DONE]\033[0m\n"
             #printf "\033[31m[FAILED]\033[0m\n"

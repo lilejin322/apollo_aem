@@ -16,6 +16,8 @@
 # limitations under the License.
 #
 ###############################################################################
+SH_SOURCE=$(realpath ${BASH_SOURCE[0]})
+TOP_DIR="$(cd "$(dirname "${SH_SOURCE}")/.." && pwd)"
 
 function _create_user_account() {
   local user_name="$1"
@@ -38,7 +40,7 @@ function setup_user_bashrc() {
   local gid="$2"
   local user_home="/home/$3"
   cp -rf /etc/skel/.{profile,bash*} "${user_home}"
-  local rcfiles_dir="/opt/apollo/neo/packages/env-manager-dev/latest/rcfiles"
+  local rcfiles_dir="${TOP_DIR}/rcfiles"
   local rc
   if [[ -d "${rcfiles_dir}" ]]; then
     for entry in ${rcfiles_dir}/*; do

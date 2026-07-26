@@ -24,7 +24,7 @@ show_usage() {
 Usage: aem [options] ...
 OPTIONS:
     -h, --help                    Display this help and exit.
-    update                        Update aem.
+    upgrade                       Upgrade apollo env manager.
 EOF
 }
 
@@ -45,16 +45,20 @@ parse_arguments() {
 
 function main() {
     parse_arguments "$@"
-    check_in_dev_docker
-    if [ ! $? -eq 0 ]; then exit -1; fi
-    if [ -f /.installed ]
-    then
-        sudo apt update --allow-insecure-repositories
-        sudo apt install --only-upgrade -y --allow-unauthenticated apollo-neo-cyber-dev apollo-neo-common-dev apollo-neo-common-msgs-dev apollo-neo-buildtool-dev
-    else
-        error "Core module have not been installed"
+    check_out_dev_docker
+    if [ ! $? -eq 0 ]; then
+        info Please use upgrade command outside the container
+        return 0
     fi
-    info "Core module have been updated"
+
+    sudo apt update --allow-insecure-repositories
+    sudo apt install --only-upgrade -y --allow-unauthenticated apollo-neo-env-manager-dev
+    if [[ ! $? -eq 0 ]]; then
+        error "Upgrade apollo env manager failed"
+        return 1
+    fi
+    info "Upgrade apollo env manager success"
+    return 0
 }
 
 main $@

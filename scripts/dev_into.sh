@@ -17,7 +17,7 @@ APOLLO_ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
 source "${APOLLO_ROOT_DIR}/scripts/apollo_base.sh"
 
 APOLLO_ENV_CONTAINER_PREFIX="apollo_neo_dev_"
-APOLLO_ENV_NAME="${APOLLO_ENV_NAME:=${USER}}"
+APOLLO_ENV_NAME="${APOLLO_ENV_NAME:=${CUR_USER}}"
 APOLLO_ENV_WORKROOT=${APOLLO_ENV_WORKROOT:='/apollo_workspace'}
 
 # override environment variables
@@ -100,7 +100,7 @@ main() {
     # Allow X server connection from container.
     xhost +local:root 1>/dev/null 2>&1
 
-    local user="${CUSTOM_USER-$USER}"
+    local user="${CUSTOM_USER:-${SUDO_USER-$USER}}"
 
     docker exec \
         -u "${user}" \
