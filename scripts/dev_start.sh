@@ -73,8 +73,7 @@ OPTIONS:
     -c, --cross-platform <arch>   Run a cross-platform image
     -y                            Agree to Apollo License Agreement non-interactively.
     --shm-size <bytes>            Size of /dev/shm . Passed directly to "docker run"
-    --gpu                         Use gpu mode to start container.
-    --gpu                         Use cpu mode to start container.
+    --gpu                         Use gpu image instead of cpu image.
     stop                          Stop all running Apollo containers.
 EOF
 }
@@ -170,10 +169,6 @@ parse_arguments() {
 
             --gpu)
                 USE_GPU_HOST=1
-                ;;
-
-            --cpu)
-                USE_GPU_HOST=0
                 ;;
 
             -n | --name)
