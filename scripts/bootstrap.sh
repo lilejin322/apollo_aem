@@ -48,14 +48,9 @@ start() {
 }
 
 stop() {
-    if [[ -z "${APOLLO_DISTRIBUTION_VERSION}" ]]; then
-        ${BUILD_TOOL} bootstrap stop dreamview-dev >/dev/null 2>&1
-        ${BUILD_TOOL} bootstrap stop monitor-dev >/dev/null 2>&1
-    else
-        ${BUILD_TOOL} bootstrap stop dreamview >/dev/null 2>&1
-        ${BUILD_TOOL} bootstrap stop dreamview_plus >/dev/null 2>&1
-        ${BUILD_TOOL} bootstrap stop monitor >/dev/null 2>&1
-    fi
+    ${BUILD_TOOL} bootstrap stop dreamview >/dev/null 2>&1
+    ${BUILD_TOOL} bootstrap stop dreamview_plus >/dev/null 2>&1
+    ${BUILD_TOOL} bootstrap stop monitor >/dev/null 2>&1
     info "complete."
 }
 
