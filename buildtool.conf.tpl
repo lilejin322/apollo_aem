@@ -49,6 +49,6 @@ march=-march=native
 
 [setting]
 host=apollo.baidu.com
-version=10.0.0-rc1-r1
+version=9.0.0-rc1-r19
 request_timeout=5
 

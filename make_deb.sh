@@ -1,12 +1,6 @@
 #!/bin/bash
 
-export SCRIPT_DIR=$(
-  cd $(dirname $0)
-  pwd
-)
-source ${SCRIPT_DIR}/env.sh
-
-VERSION=${AEM_VERSION}
+VERSION=${VERSION:-10.0.0-rc1-r2}
 PKG_NAME="${PKG_NAME:-apollo-neo-env-manager-dev}"
 CODE_NAME="${CODE_NAME:-$(lsb_release -cs)}"
 ARCH="${ARCH:-$(dpkg --print-architecture)}"
@@ -38,8 +32,6 @@ EOF
 rm -f /etc/bash_completion.d/aem
 rm -f /usr/share/zsh/functions/Completion/Unix/_aem
 rm -f /usr/bin/aem
-rm -rf /opt/apollo/neo/packages/env-manager-dev
-rm -rf /usr/local/bin/aem
 EOF
   chmod +x "${build_dir}/DEBIAN/prerm"
 

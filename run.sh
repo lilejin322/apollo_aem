@@ -203,7 +203,6 @@ aem_usage() {
   echo "Usage:
     $0 <subcommand> [...args]
 Subcommands:
-  version           Show aem version
   create|start      Create and start a new environment
   remove            Remove and stop an existing environment
   list              List all available environments
@@ -256,11 +255,6 @@ aem() {
   local cmd="$1"
   if [[ "${cmd}" == "help" ]] || [[ "${cmd}" == "-h" ]] || [[ "${cmd}" == "--help" ]]; then
     aem_usage
-    return 0
-  fi
-
-  if [[ "${cmd}" == "version" ]]; then
-    colorize ${AEM_VERSION} ${CSI_SGR_PARAM_BOLD} ${CSI_SGR_PARAM_FG_BLUE} 
     return 0
   fi
 
